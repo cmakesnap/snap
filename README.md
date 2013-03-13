@@ -40,8 +40,11 @@ open source community for its speed, portability, and ease of use.
 Installation
 ---------------
 
-1. Download to a local directory <snap_dir>
-2. Add the following to your .bashrc
+1. Get the code.
+    * git clone git://github.com/cmakesnap/snap.git 
+    * https://github.com/cmakesnap/snap/archive/master.zip
+2. Run the ./install.py script in the project root to install dependencies (cmake, protobuf, swig)
+2. Add the following to your ~/.bashrc 
 
 ```bash
 # Tell CMake about the snap extensions
