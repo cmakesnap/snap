@@ -18,7 +18,36 @@ Currently supported targets:
 * PROTO_LIBRARY - Generates C++, Python, and Java libraries for a .proto file  
 * PYTHON_BINARY - Optional mark as a test target
  
- 
+   
+Installation
+---------------
+
+1. Get the code.
+    * git clone git://github.com/cmakesnap/snap.git 
+    * https://github.com/cmakesnap/snap/archive/master.zip
+2. Run the ./install.py script in the project root to install dependencies (cmake, protobuf, swig)
+3. Add the following snippet to your ~/.bashrc 
+
+```bash
+# Tell CMake about the snap extensions
+export cmakesnap_DIR=<snap_dir>
+
+# Adds handy command to toggle between corresponding locations in source and
+# and build directory tree with the command 'snap-toggle'
+alias snap-toggle='cd `${cmakesnap_DIR}/internal/util/snap-toggle.py`'
+```
+
+4. Run the ./run_tests.sh to build the example projects (start here for examples)
+
+Getting Started
+-------
+* See the examples directory
+
+
+
+
+Design
+---------------
 Snap aims to make building software from reusable components as easy as snapping
 together Lego building blocks.  Traditional build tools require verbose 
 specifications of system installed and custom library resources and their 
@@ -35,22 +64,4 @@ run in another environment.  This is a basic requirement for distributed
 computing which can be difficult to achieve with conventional build tools.  Snap
 is built as a set of macros for the CMake build system which is widely used in 
 open source community for its speed, portability, and ease of use.
- 
-   
-Installation
----------------
 
-1. Get the code.
-    * git clone git://github.com/cmakesnap/snap.git 
-    * https://github.com/cmakesnap/snap/archive/master.zip
-2. Run the ./install.py script in the project root to install dependencies (cmake, protobuf, swig)
-2. Add the following to your ~/.bashrc 
-
-```bash
-# Tell CMake about the snap extensions
-export cmakesnap_DIR=<snap_dir>
-
-# Adds handy command to toggle between corresponding locations in source and
-# and build directory tree with the command 'snap-toggle'
-alias snap-toggle='cd `${cmakesnap_DIR}/internal/util/snap-toggle.py`'
-```
