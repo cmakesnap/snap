@@ -4,3 +4,4 @@ compiler:
 
 before_script: chmod +x ./install.py; ./install.py 
 script: chmod +x ./run_tests.sh; ./run_tests.sh
+after_script: cat ./build/Testing/Temporary/LastTest.log
