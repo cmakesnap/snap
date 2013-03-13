@@ -41,10 +41,11 @@ Installation
 1. Download to a local directory <snap_dir>
 2. Add the following to your .bashrc
 
+```bash
 # Tell CMake about the snap extensions
 export cmakesnap_DIR=<snap_dir>
 
 # Adds handy command to toggle between corresponding locations in source and
 # and build directory tree with the command 'snap-toggle'
 alias snap-toggle='cd `${cmakesnap_DIR}/internal/util/snap-toggle.py`'
-
+```
