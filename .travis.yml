@@ -3,5 +3,5 @@ compiler:
   - clang
 
 before_install: sudo apt-get install cmake
-before_script: chmod +x ./install.py; chmod +x ./run_tests.sh
-script: ./run_tests.sh
+before_script: chmod +x ./install.py; ./install.py 
+script: chmod +x ./run_tests.sh; ./run_tests.sh
