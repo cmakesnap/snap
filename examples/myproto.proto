@@ -1,0 +1,14 @@
+package myproto;
+
+// Represents a person
+message Person {
+	required fixed64 id = 1;  // 
+	required string first_name = 2; // 
+  required string last_name = 3; // 
+}
+
+// Represents a dog
+message Dog {
+  required fixed64 id = 1;  // 
+  required string name = 2; //  
+}
