@@ -26,6 +26,16 @@ def EnsurePath(path):
     pass
   return
 
+def InstallCMake():  
+  cmd = 'sudo apt-get install cmake'
+  ExecuteCmd(cmd)
+  return  
+
+def InstallSwig():  
+  cmd = 'sudo apt-get install swig'
+  ExecuteCmd(cmd)
+  return  
+  
 def InstallProtobuffers():
   url = 'http://protobuf.googlecode.com/files/protobuf-2.4.1.tar.gz'
   split = urllib2.urlparse.urlsplit(url)
@@ -43,4 +53,6 @@ def InstallProtobuffers():
 
 
 if __name__ == "__main__":
+  InstallCMake()
+  InstallSwig()
   InstallProtobuffers()
