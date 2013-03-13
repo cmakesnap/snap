@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Snap by cmakesnap</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Snap</h1>
+        <h2>Snap simplifies building projects with C++/Python/Java targets</h2>
+        <a href="https://github.com/cmakesnap/snap" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>CMake SNAP</h1>
+
+<p><em>Author: Kyle Heath (cmakesnap [at] gmail)</em></p>
+
+<p><a href="https://travis-ci.org/cmakesnap/snap"><img src="https://travis-ci.org/cmakesnap/snap.png" alt="Build Status"></a></p>
+
+<h2>What is CMake SNAP?</h2>
+
+<ul>
+<li>A system for building software for projects with C/C++/Python/Java targets</li>
+<li>Makes CMakeLists.txt files very concise</li>
+<li>Provides a notion of reusable packages </li>
+<li>Transparently manages package dependencies </li>
+</ul><p>Currently supported targets: </p>
+
+<ul>
+<li>CPP_BINARY - Optional mark as a test target</li>
+<li>CPP_LIBRARY - Optional SWIG python bindings</li>
+<li>PROTO_LIBRARY - Generates C++, Python, and Java libraries for a .proto file<br>
+</li>
+<li>PYTHON_BINARY - Optional mark as a test target</li>
+</ul><h2>Installation</h2>
+
+<ol>
+<li>Get the code.
+
+<ul>
+<li>git clone git://github.com/cmakesnap/snap.git </li>
+<li><a href="https://github.com/cmakesnap/snap/archive/master.zip">https://github.com/cmakesnap/snap/archive/master.zip</a></li>
+</ul>
+</li>
+<li>Run the ./install.py script in the project root to install dependencies (cmake, protobuf, swig)</li>
+<li>Add the following snippet to your ~/.bashrc </li>
+</ol><div class="highlight"><pre><span class="c"># Tell CMake about the snap extensions</span>
+<span class="nb">export </span><span class="nv">cmakesnap_DIR</span><span class="o">=</span>&lt;snap_dir&gt;
+
+<span class="c"># Adds handy command to toggle between corresponding locations in source and</span>
+<span class="c"># and build directory tree with the command 'snap-toggle'</span>
+<span class="nb">alias </span>snap-toggle<span class="o">=</span><span class="s1">'cd `${cmakesnap_DIR}/internal/util/snap-toggle.py`'</span>
+</pre></div>
+
+<ol>
+<li>Run the ./run_tests.sh to build the example projects (start here for examples)</li>
+</ol><h2>Getting Started</h2>
+
+<ul>
+<li>See the examples directory</li>
+</ul><h2>Design</h2>
+
+<p>Snap aims to make building software from reusable components as easy as snapping
+together Lego building blocks.  Traditional build tools require verbose 
+specifications of system installed and custom library resources and their 
+dependencies which requires significant overhead for each component reused and
+make it more difficult for others to build the same software in a different 
+computer environment.  Snap allows users to write very concise specifications 
+of the desired build targets and reuse components via a simple unique package 
+name scheme.  Snap makes it easier to build all of a target’s dependencies from 
+source distributed with the project which eliminates many problems caused by 
+variations in system installed libraries among various operating systems.<br>
+This scheme also enables “as-static-as-possible-linking” which is required when 
+compiling c/c++ binaries on one system which must be distributed and reliably 
+run in another environment.  This is a basic requirement for distributed 
+computing which can be difficult to achieve with conventional build tools.  Snap
+is built as a set of macros for the CMake build system which is widely used in 
+open source community for its speed, portability, and ease of use.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/cmakesnap/snap/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/cmakesnap/snap/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/cmakesnap/snap"></a> is maintained by <a href="https://github.com/cmakesnap">cmakesnap</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
