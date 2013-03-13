@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 """ This script installs a customized version of protobuf 2.4.1.  
 Our application requires the use of -fPIC and the CPP implementation for python
