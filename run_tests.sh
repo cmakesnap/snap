@@ -2,6 +2,9 @@
 mkdir build
 cd build
 cmake ..
-make 
+cmake ..
+cmake ..
+make
+make
 make test
 exit
