@@ -32,7 +32,7 @@ def InstallCMake():
   return  
 
 def InstallSwig():  
-  cmd = 'sudo apt-get install swig'
+  cmd = 'sudo apt-get install swig python-dev'  
   ExecuteCmd(cmd)
   return  
   
