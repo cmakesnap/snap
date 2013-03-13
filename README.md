@@ -5,19 +5,18 @@ CMake SNAP
 What is CMake SNAP?
 -------------------------------------------------------------------------------
 
-* A unified build system for C/C++/Python/Java packages
-* Write concise CMakeLists.txt files 
-* Specify all package dependencies by a uri naming scheme
-* Transparently manages the dependency among packages 
+* A system for building software for projects with C/C++/Python/Java targets
+* Makes CMakeLists.txt files very concise
+* Provides a notion of reusable packages 
+* Transparently manages package dependencies 
 
-Current Target Types: 
-* CPP_BINARY
-* CPP_LIBRARY
+Currently supported targets: 
+* CPP_BINARY - Optional mark as a test target
+* CPP_LIBRARY - Optional SWIG python bindings
 * PROTO_LIBRARY - Generates C++, Python, and Java libraries for a .proto file  
-* PYTHON_BINARY 
-* JAVA_BINARY 
+* PYTHON_BINARY - Optional mark as a test target
  
-
+ 
 Snap aims to make building software from reusable components as easy as snapping
 together Lego building blocks.  Traditional build tools require verbose 
 specifications of system installed and custom library resources and their 
@@ -35,21 +34,17 @@ computing which can be difficult to achieve with conventional build tools.  Snap
 is built as a set of macros for the CMake build system which is widely used in 
 open source community for its speed, portability, and ease of use.
  
-
    
 Installation
 ---------------
 
-1. Download and unpack file
+1. Download to a local directory <snap_dir>
 2. Add the following to your .bashrc
 
 # Tell CMake about the snap extensions
-export cmakesnap_DIR=<path to the snap directory>
+export cmakesnap_DIR=<snap_dir>
 
 # Adds handy command to toggle between corresponding locations in source and
 # and build directory tree with the command 'snap-toggle'
 alias snap-toggle='cd `${cmakesnap_DIR}/internal/util/snap-toggle.py`'
 
-EXMAPLE:
-export cmakesnap_DIR=${HOME}/workspace/snap
-alias snap-toggle='cd `${cmakesnap_DIR}/internal/util/snap-toggle.py`'
