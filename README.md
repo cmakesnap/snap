@@ -8,16 +8,6 @@ With Snap you can
 * All dependent packages are imported and built when required.
 
 
-Currently supported targets: 
-* CPP_BINARY - *Option: Mark as a "test" to be run in the project test suite* 
-* CPP_LIBRARY - *Option to generate SWIG python bindings*
-* PROTO_LIBRARY - *Generates C++, Python, and Java libraries for a .proto file (and helps easily pass protobufs between c++ and python code)
-* PYTHON_BINARY - 
-* PYTHON_LIBRARY - 
-* LOCAL_RESOURCE - *A set of files required by a target at runtime (html templates, config files, etc.).*
-* REMOTE_RESOURCE - *A url that should be downloaded and untared to provide files required by a target at runtime . Useful for large binary data files that are needed for unit tests but don't place nice with git.*
- 
-   
 Installation
 ---------------
 
@@ -41,6 +31,15 @@ alias snap-toggle='cd `${cmakesnap_DIR}/internal/util/snap-toggle.py`'
 Getting Started
 -------
 * See the examples directory
+
+Currently supported targets: 
+* CPP_BINARY - *Option: Mark as a "test" to be run in the project test suite* 
+* CPP_LIBRARY - *Option to generate SWIG python bindings*
+* PROTO_LIBRARY - *Generates C++, Python, and Java libraries for a .proto file (and helps easily pass protobufs between c++ and python code)
+* PYTHON_BINARY - 
+* PYTHON_LIBRARY - 
+* LOCAL_RESOURCE - *A set of files required by a target at runtime (html templates, config files, etc.).*
+* REMOTE_RESOURCE - *A url that should be downloaded and untared to provide files required by a target at runtime . Useful for large binary data files that are needed for unit tests but don't place nice with git.*
 
 
 Design
