@@ -1,22 +1,21 @@
 CMake SNAP
 ===================
-*Author: Kyle Heath (cmakesnap [at] gmail)*
+Snap makes building software with C/C++/Python/Java targets easier...
 
-[![Build Status](https://travis-ci.org/cmakesnap/snap.png)](https://travis-ci.org/cmakesnap/snap)
+With Snap you can
+* Write short and readable CMakeLists.txt files
+* To use a package, just list the package URIs.... 
+* All dependent packages are imported and built when required.
 
-What is CMake SNAP?
--------------------------------------------------------------------------------
-
-* A system for building software for projects with C/C++/Python/Java targets
-* Makes CMakeLists.txt files very concise
-* Provides a notion of reusable packages 
-* Transparently manages package dependencies 
 
 Currently supported targets: 
-* CPP_BINARY - Optional mark as a test target
-* CPP_LIBRARY - Optional SWIG python bindings
-* PROTO_LIBRARY - Generates C++, Python, and Java libraries for a .proto file  
-* PYTHON_BINARY - Optional mark as a test target
+* CPP_BINARY - *Option: Mark as a "test" to be run in the project test suite* 
+* CPP_LIBRARY - *Option to generate SWIG python bindings*
+* PROTO_LIBRARY - *Generates C++, Python, and Java libraries for a .proto file (and helps easily pass protobufs between c++ and python code)
+* PYTHON_BINARY - 
+* PYTHON_LIBRARY - 
+* LOCAL_RESOURCE - *A set of files required by a target at runtime (html templates, config files, etc.).*
+* REMOTE_RESOURCE - *A url that should be downloaded and untared to provide files required by a target at runtime . Useful for large binary data files that are needed for unit tests but don't place nice with git.*
  
    
 Installation
@@ -44,8 +43,6 @@ Getting Started
 * See the examples directory
 
 
-
-
 Design
 ---------------
 Snap aims to make building software from reusable components as easy as snapping
@@ -65,3 +62,8 @@ computing which can be difficult to achieve with conventional build tools.  Snap
 is built as a set of macros for the CMake build system which is widely used in 
 open source community for its speed, portability, and ease of use.
 
+Contact
+------
+*Author: Kyle Heath (cmakesnap [at] gmail)*
+
+[![Build Status](https://travis-ci.org/cmakesnap/snap.png)](https://travis-ci.org/cmakesnap/snap)
