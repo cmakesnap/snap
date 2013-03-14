@@ -1,10 +1,8 @@
 CMake SNAP
 ===================
-Snap makes building software with C/C++/Python/Java targets easier...
-
-With Snap you can
+Snap makes building software with C/C++/Python/Java targets easier. With Snap you can...
 * Write short and readable CMakeLists.txt files
-* To use a package, just list the package URIs.... 
+* Use a package in a new target just by listing the package name (a URI formatted string). 
 * All dependent packages are imported and built when required.
 
 
@@ -17,16 +15,17 @@ Installation
 2. Run the ./install.py script in the project root to install dependencies (cmake, protobuf, swig)
 3. Add the following snippet to your ~/.bashrc 
 
-```bash
-# Tell CMake about the snap extensions
-export cmakesnap_DIR=<snap_dir>
-
-# Adds handy command to toggle between corresponding locations in source and
-# and build directory tree with the command 'snap-toggle'
-alias snap-toggle='cd `${cmakesnap_DIR}/internal/util/snap-toggle.py`'
-```
+   ````bash
+   # Tell CMake about the snap extensions
+   export cmakesnap_DIR=<snap_dir>
+   
+   # Adds handy command to toggle between corresponding locations in source and
+   # and build directory tree with the command 'snap-toggle'
+   alias snap-toggle='cd `${cmakesnap_DIR}/internal/util/snap-toggle.py`'
+   ````
 
 4. Run the ./run_tests.sh to build the example projects (start here for examples)
+
 
 Getting Started
 -------
