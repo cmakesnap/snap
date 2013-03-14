@@ -5,6 +5,76 @@ Snap makes building software with C/C++/Python/Java targets easier. With Snap yo
 * Use a package in a new target just by listing the package name (a URI formatted string). 
 * All dependent packages are imported and built when required.
 
+Example Usage
+-----------
+````cmake
+# Example of a header only C++ library package
+CPP_LIBRARY(
+  NAME      headerlib
+  HEADERS   handy_header_lib.hpp
+  LIB_TYPE  HEADER
+)           
+
+# Example of a C++ binary that uses both a standard and header only library  
+CPP_BINARY(
+  NAME      hello_snap
+  SOURCES   hello_snap.cpp   
+  PACKAGES  //examples/cpp/base64:base64  # a static lib  
+            //examples/cpp:headerlib  # a header only lib                          
+)        
+```
+
+````cmake
+# Example of a static C++ library package
+CPP_LIBRARY(
+  NAME      base64 
+  SOURCES   cdecode.cpp
+            cencode.cpp 
+  HEADERS   cdecode.h
+            cencode.h
+            decode.h
+            encode.h
+  LIB_TYPE  STATIC
+)
+
+# Example of a unit test for the static library
+CPP_BINARY(
+  NAME      base64_test
+  SOURCES   base64_test.cpp   
+  PACKAGES  //examples/cpp/base64:base64                        
+  TEST_SIZE small
+)  
+````
+
+````cmake
+# Builds a protcol buffer library for C++ and python
+PROTO_LIBRARY(
+  NAME  myproto
+  PROTO myproto.proto  
+)
+````
+
+
+````cmake
+# Build a C++ library and generate bindings to use library directly in python
+CPP_LIBRARY(
+  NAME     breaking_news
+  SOURCES  breaking_news.cpp
+  HEADERS  breaking_news.h
+  PACKAGES //examples:myproto  # a proto library        
+  LIB_TYPE STATIC_AND_SHARED
+  SWIG_PY  py_breaking_news.i
+)
+
+# Example python code that uses the C++ library above passing protocol buffers as input and outputs to methods
+PY_BINARY(
+  NAME      test_breaking_news
+  SOURCES   test_breaking_news.py
+  PACKAGES  //examples/py:py_breaking_news  # a c++ library with python bindings  
+  TEST_SIZE small            
+)
+````
+
 
 Installation
 ---------------
