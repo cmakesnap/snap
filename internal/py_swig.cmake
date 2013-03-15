@@ -20,7 +20,8 @@ FUNCTION(SWIG_PYTHON)
     ENDIF()
         
     PACKAGE_BASENAME_TO_URI(${_NAME} target_uri)
-    URI_TO_TARGET_NAME(${target_uri} target)
+    URI_TO_TARGET_NAME(${target_uri} target) # uri of the new bindings package to be created
+    URI_TO_TARGET_NAME(${_WRAP_PACKAGE_URI} wrap_target_name) # uri of the package to be wrapped
     
     # Compute all package dependencies (transitively)
     COMPUTE_PACKAGE_TRANSITIVE_CLOSURE("${_WRAP_PACKAGE_URI}" missing_package_uris required_package_uris required_libraries required_includes)
@@ -37,12 +38,12 @@ FUNCTION(SWIG_PYTHON)
     SET(CMAKE_SWIG_FLAGS "")
     SET_SOURCE_FILES_PROPERTIES(${_SOURCE} PROPERTIES CPLUSPLUS ON)
     SWIG_ADD_MODULE(${_NAME} python ${_SOURCE})
-    #SWIG_LINK_LIBRARIES(${_NAME} ${PYTHON_LIBRARIES} ${${_WRAP}_LIBRARIES})
+    
     SWIG_LINK_LIBRARIES(${_NAME} ${PYTHON_LIBRARIES} ${required_libraries})
     
     # This makes sure CMAKE knows to build all of our dependencies first
-    ADD_CUSTOM_TARGET(${target} DEPENDS ${_WRAP} SOURCES ${_SOURCE})    
-    ADD_DEPENDENCIES(${SWIG_MODULE_${_NAME}_REAL_NAME} ${_WRAP} ${target})
+    ADD_CUSTOM_TARGET(${target} DEPENDS ${wrap_target_name} SOURCES ${_SOURCE})    
+    ADD_DEPENDENCIES(${SWIG_MODULE_${_NAME}_REAL_NAME} ${target})
     
     SET("${target}_DIR" ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "Path to package ${target_uri}" FORCE)
     MARK_AS_ADVANCED("${target}_DIR")
