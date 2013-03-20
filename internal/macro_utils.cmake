@@ -189,13 +189,21 @@ MACRO(PACKAGE_BASENAME_TO_URI package_name uri)
 ENDMACRO()    
 
 # Convert a package uri into a string that can be used as a cmake target name
-MACRO(URI_TO_TARGET_NAME uri target_name )    
+FUNCTION(URI_TO_TARGET_NAME uri target_name )    
     TO_CANONICAL_URI(${uri} tmp)
     STRING(REPLACE "://" "-" tmp ${tmp})    
     STRING(REPLACE "/" "-" tmp ${tmp})
     STRING(REPLACE ":" "-" tmp ${tmp})    
-    SET(${target_name} ${tmp})    
-ENDMACRO()
+    SET(${target_name} ${tmp} PARENT_SCOPE)    
+ENDFUNCTION()
+
+FUNCTION(URIS_TO_TARGET_NAMES in_uris out_targetnames)  
+  FOREACH(uri ${in_uris})      
+    URI_TO_TARGET_NAME(${uri} target_name)    
+    LIST(APPEND targetnames ${target_name})        
+  ENDFOREACH()
+  SET(${out_targetnames} ${targetnames} PARENT_SCOPE)
+ENDFUNCTION()
 
 ################################################################################
 # SNAP - Python

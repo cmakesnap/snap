@@ -39,17 +39,15 @@ FUNCTION(SWIG_PYTHON)
     SET_SOURCE_FILES_PROPERTIES(${_SOURCE} PROPERTIES CPLUSPLUS ON)
     SWIG_ADD_MODULE(${_NAME} python ${_SOURCE})
     
-    SWIG_LINK_LIBRARIES(${_NAME} ${PYTHON_LIBRARIES} ${required_libraries})
-    
     # This makes sure CMAKE knows to build all of our dependencies first
-    ADD_CUSTOM_TARGET(${target} DEPENDS ${wrap_target_name} SOURCES ${_SOURCE})    
-    ADD_DEPENDENCIES(${SWIG_MODULE_${_NAME}_REAL_NAME} ${target})
+    URIS_TO_TARGET_NAMES("${required_package_uris}" required_package_target_names)
+    SWIG_LINK_LIBRARIES(${_NAME} ${PYTHON_LIBRARIES} ${required_libraries})
+    ADD_DEPENDENCIES(${SWIG_MODULE_${_NAME}_REAL_NAME} ${required_package_target_names})
     
     SET("${target}_DIR" ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "Path to package ${target_uri}" FORCE)
     MARK_AS_ADVANCED("${target}_DIR")
     CONFIGURE_FILE("${cmakesnap_DIR}/internal/config.cmake.in"
                     ${CMAKE_CURRENT_BINARY_DIR}/${target}Config.cmake @ONLY IMMEDIATE)
-    
     
     CREATE_PYTHON_INIT_FILES()
     STRING(REGEX REPLACE "${CMAKE_SOURCE_DIR}/(.*)" "\\1" dest_dir ${CMAKE_CURRENT_SOURCE_DIR})    
