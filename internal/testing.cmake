@@ -19,21 +19,21 @@ ENABLE_TESTING()
 # The default test target will run all tests... 
 # Here are additional targets that filter the labels appropriately
 ADD_CUSTOM_TARGET(test_small 
-                 COMMAND /usr/local/bin/ctest -LE "medium|large"                    
+                 COMMAND ctest -LE "medium|large"                    
                  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                  COMMENT "Running all small tests"
                  VERBATIM                 
                  )
                  
 ADD_CUSTOM_TARGET(test_medium
-                 COMMAND /usr/local/bin/ctest -LE "large"                    
+                 COMMAND ctest -LE "large"                    
                  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                  COMMENT "Running all small and mediuim tests"
                  VERBATIM                 
                  )
                  
 ADD_CUSTOM_TARGET(test_large
-                 COMMAND /usr/local/bin/ctest                    
+                 COMMAND ctest                    
                  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                  COMMENT "Running all small, medium, and large tests"
                  VERBATIM                 
