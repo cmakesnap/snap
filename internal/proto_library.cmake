@@ -82,12 +82,19 @@ MACRO(PROTO_LIBRARY)
                           "PACKAGES;" # List valued arguments
                           ${ARGN})
     
-    # Print helpful error messages
+    # Print more helpful error messages than provided by REQUIRE_NOT_EMPTY
+    # Ensure the user entered something
     IF(NOT _PROTO)
-        MESSAGE(FATAL_ERROR "WARNING: No proto file provided for project ${target}")
+        MESSAGE(FATAL_ERROR "No proto file provided for project ${target}")
     ENDIF()
     
-    REQUIRE_NOT_EMPTY(_NAME _PROTO)
+    # Ensure that "something" actually exists...
+    SET(PROTO_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${_PROTO}") 
+    IF(NOT EXISTS ${PROTO_PATH})
+        MESSAGE(FATAL_ERROR "Specified proto file doesn't exist: ${PROTO_PATH}") 
+    ENDIF()
+    
+    REQUIRE_NOT_EMPTY(_NAME _PROTO) # check assumptions
     
     IF(_UNPARSED_ARGUMENTS)
       MESSAGE(FATAL_ERROR "unexpected arguments: ${_UNPARSED_ARGUMENTS}")
@@ -156,7 +163,7 @@ MACRO(PROTO_LIBRARY)
     
     ###################
     ##### SWIG   ######
-    ###################
+    ###################    
     PROTOBUF_GENERATE_SWIG(PROTO_SWIG_SRCS ${_PROTO})
     ADD_CUSTOM_TARGET( generate_swig_${target}  ALL DEPENDS ${PROTO_SWIG_SRCS} )
    
