@@ -26,11 +26,11 @@ ENDMACRO()
 # Linking an executable will fail if there are symbols missing, but a library will seem ok until you try to use it.
 # This causes the same checking that occurs for an executable to be done for a library. 
 MACRO(CHECK_FOR_MISSING_SYMBOLS target)
-    #GET_TARGET_PROPERTY(CUR_LINK_FLAGS ${target} LINK_FLAGS)
-    #IF (NOT CUR_LINK_FLAGS)
-    #    SET(CUR_LINK_FLAGS "")
-    #ENDIF()   
-    #SET_TARGET_PROPERTIES(${target} PROPERTIES LINK_FLAGS "${CUR_LINK_FLAGS} -Wl,-z,defs")
+    GET_TARGET_PROPERTY(CUR_LINK_FLAGS ${target} LINK_FLAGS)
+    IF (NOT CUR_LINK_FLAGS)
+        SET(CUR_LINK_FLAGS "")
+    ENDIF()   
+    SET_TARGET_PROPERTIES(${target} PROPERTIES LINK_FLAGS "${CUR_LINK_FLAGS} -Wl,-z,defs")
 ENDMACRO()    
 
 
