@@ -78,25 +78,24 @@ FUNCTION(CPP_LIBRARY)
       IF(BUILD_STATIC_LIB)       
         SET(target_output "${_NAME}")
         ADD_LIBRARY(${target} STATIC ${_HEADERS} ${_SOURCES})        
-        set_target_properties(${target} PROPERTIES COMPILE_FLAGS "-fPIC") # -fPIC required for x86_64 static libs            
+        set_target_properties(${target} PROPERTIES COMPILE_FLAGS "-fPIC") # -fPIC required for x86_64 static libs
+        SET_TARGET_PROPERTIES("${target}" PROPERTIES OUTPUT_NAME "${target_output}")     
       ELSEIF(BUILD_SHARED_LIB)                       
         SET(target "${target}-shared")
         SET(target_output "${_NAME}-shared")
-        ADD_LIBRARY(${target} SHARED ${_HEADERS} ${_SOURCES})        
-        #MESSAGE(FATAL_ERROR "_SWIG_PY: ${_SWIG_PY}")
+        ADD_LIBRARY(${target} SHARED ${_HEADERS} ${_SOURCES}) 
+        SET_TARGET_PROPERTIES("${target}" PROPERTIES OUTPUT_NAME "${target_output}")
         IF(_SWIG_PY)
           SET(wrap_package_uri "${target_uri}-shared") 
           SWIG_PYTHON(NAME   py_${_NAME}
                       SOURCE ${_SWIG_PY}
-                      WRAP_PACKAGE_URI   ${wrap_package_uri})
+                      WRAP_PACKAGE_URI   ${wrap_package_uri})                      
         ENDIF()
       ELSE()
         MESSAGE(FATAL_ERROR "this shouldn't happen")
       ENDIF()                   
-      SET_TARGET_PROPERTIES("${target}" PROPERTIES OUTPUT_NAME "${target_output}")
-      CHECK_FOR_MISSING_SYMBOLS(${target})     
-                                
       TARGET_LINK_LIBRARIES(${target} ${required_libraries})
+      CHECK_FOR_MISSING_SYMBOLS(${target})
       INCLUDE(${cmakesnap_DIR}/internal/cpp_install_common.cmake)      
     ENDIF()  
         
