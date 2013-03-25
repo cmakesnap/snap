@@ -3,16 +3,26 @@ import os
 import sys
 
 # To use this command, add the following to your ~/.bashrc file (or similar)
-# alias sbs='cd `swap_build_src_path.py`'
+# alias sbs='cd `snap-toggle.py`'
 
 
-# If current path is under the source branch of a cmake SNAP project, try to 
+# if no params: If current path is under the source branch of a cmake SNAP project, try to 
 # switch to the corresponding build path.
+# if one param: Assume this is the current working dir that should be toggled (useful for scripts)
 def main():
   
   # get current dir
-  cur_path = os.getcwd()
+  cur_path = None
+  num_args = len(sys.argv) - 1 
+  if num_args == 0:
+    # get current dir
+    cur_path = os.getcwd()
+  elif num_args == 1:
+    cur_path = sys.argv[1]
+  else:
+    sys.stderr.write("Expected 0 or 1 arguments but got: %s \n" % (sys.argv))
   
+    
   # walk up the tree, looking for project base dir (contains build dir)
   project_base = None
   in_binary_branch = False
