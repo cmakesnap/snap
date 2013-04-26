@@ -141,6 +141,12 @@ MACRO(PROTO_LIBRARY)
       MESSAGE(FATAL_ERROR "no target defined!")
     ENDIF()
     
+    # This makes sure CMAKE knows to build all of our dependencies first
+    FOREACH(dependency_uri ${_PACKAGES})
+      URI_TO_TARGET_NAME(${dependency_uri} dependency_target)
+      ADD_DEPENDENCIES(${target} ${dependency_target})
+    ENDFOREACH()
+    
     # install generated files  
     STRING(REGEX REPLACE "${CMAKE_SOURCE_DIR}/(.*)" "\\1" dest_dir ${CMAKE_CURRENT_SOURCE_DIR})
     INSTALL(FILES ${TARGET_FILE} DESTINATION ${dest_dir} )    
