@@ -1,3 +1,9 @@
+# Multiple-inclusion guard
+IF(__MACRO_SNAP_SYS_PACKAGE_INCLUDED)    
+  RETURN()
+ENDIF()
+SET(__MACRO_SNAP_SYS_PACKAGE_INCLUDED TRUE)
+
 # Helps simplify a lot of boilerplate code for finding system install libraries.
 MACRO(FIND_SNAP_SYS_PACKAGE)
   SET(FIND_SNAP_SYS_PACKAGE_ARGS "${ARGN}")
