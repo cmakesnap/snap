@@ -12,10 +12,10 @@ FUNCTION(COMPUTE_PACKAGE_TRANSITIVE_CLOSURE
   required_includes_out
 )
   # Clear output variables
-  SET(required_package_uris)
-  SET(missing_package_uris)
-  SET(required_libraries)
-  SET(required_includes)
+  SET(required_package_uris "")
+  SET(missing_package_uris "")
+  SET(required_libraries "")
+  SET(required_includes "")
   
   IF(NOT query_package_uris)
     RETURN()
@@ -28,7 +28,6 @@ FUNCTION(COMPUTE_PACKAGE_TRANSITIVE_CLOSURE
     TO_CANONICAL_URI(${uri} cannonical_uri)
     LIST(APPEND uri_stack ${cannonical_uri})    
   ENDFOREACH()  
-  LIST(REMOVE_DUPLICATES uri_stack)
   
   # Construct transitive closure  
   LIST(LENGTH uri_stack uri_stack_size)  
@@ -47,7 +46,9 @@ FUNCTION(COMPUTE_PACKAGE_TRANSITIVE_CLOSURE
         FIND_PACKAGE(${target_name} QUIET NO_MODULE)  #don't let a FindFoo.cmake module file overide a specifed location in Foo_DIR        
       ENDIF()            
     ELSEIF("${uri_scheme}" STREQUAL "SYS")
-      FIND_PACKAGE(${target_name} QUIET) # should find these in the /internal/modules path             
+      IF (NOT DEFINED ${target_name}_FOUND)    
+        FIND_PACKAGE(${target_name} QUIET) # should find these in the /internal/modules path
+      ENDIF()             
     ELSE()
       MESSAGE(FATAL_ERROR "unknown uri scheme: ${uri_scheme}")
     ENDIF()
@@ -57,17 +58,25 @@ FUNCTION(COMPUTE_PACKAGE_TRANSITIVE_CLOSURE
       LIST(APPEND missing_package_uris ${uri})
       UNSET(${target_name}_DIR CACHE)
       BREAK() # exit the while loop
-    # Otherwise, add the packages dependencies to the queue
+    # Otherwise, add the package's dependencies to the queue
     ELSE()
       LIST(APPEND required_libraries ${${target_name}_LIBRARIES})
       LIST(APPEND required_includes ${${target_name}_INCLUDE_DIRS})
-      IF(${target_name}_REQUIRED_PACKAGES)
+      # add any packages required by this package if they haven't been processed
+      IF(${target_name}_REQUIRED_PACKAGES)      
+        # NOTE: This is tricky... This is non-optimal because a package could be
+        # repeated... However, the simple optimization of removing the redundant
+        # packages may not provide the required link order...     
         LIST(APPEND uri_stack ${${target_name}_REQUIRED_PACKAGES})
-        list(REMOVE_DUPLICATES uri_stack) 
       ENDIF()
     ENDIF()   
     LIST(LENGTH uri_stack uri_stack_size)   
   ENDWHILE()
+  
+  LIST(REMOVE_DUPLICATES missing_package_uris)
+  LIST(REMOVE_DUPLICATES required_package_uris)  
+  LIST(REMOVE_DUPLICATES required_includes)
+  #LIST(REMOVE_DUPLICATES required_libraries) # DONT DO THIS!!! This screws up the link order and will break everything... in a subtle and hard to find way!
   
   # Copy to output variables (notice PARENT_SCOPE required when using function instead of macro)
   set(${missing_package_uris_out} ${missing_package_uris} PARENT_SCOPE)
