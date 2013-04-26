@@ -106,7 +106,7 @@ MACRO(PROTO_LIBRARY)
     
     # Compute all package dependencies (transitively)
     LIST(APPEND _PACKAGES "SYS://protobuf")
-    COMPUTE_PACKAGE_TRANSITIVE_CLOSURE(${_PACKAGES} missing_package_uris required_package_uris required_libraries required_includes)
+    COMPUTE_PACKAGE_TRANSITIVE_CLOSURE("${_PACKAGES}" missing_package_uris required_package_uris required_libraries required_includes)
     
     # Warn if a dependency is missing.
     IF(missing_package_uris)
@@ -145,7 +145,7 @@ MACRO(PROTO_LIBRARY)
     STRING(REGEX REPLACE "${CMAKE_SOURCE_DIR}/(.*)" "\\1" dest_dir ${CMAKE_CURRENT_SOURCE_DIR})
     INSTALL(FILES ${TARGET_FILE} DESTINATION ${dest_dir} )    
     
-    SET(requiredPackages ${_PACKAGES})
+    TO_CANONICAL_URIS("${_PACKAGES}" requiredPackages)
     CONFIGURE_FILE("${cmakesnap_DIR}/internal/config.cmake.in"
                    ${CMAKE_CURRENT_BINARY_DIR}/${target}Config.cmake @ONLY IMMEDIATE)                                   
     SET("${target}_DIR" ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "default path to ${target} lib" FORCE)
