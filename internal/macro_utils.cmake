@@ -6,6 +6,7 @@ SET(__MACRO_UTILS_INCLUDED TRUE)
 
 INCLUDE(CMakeParseArguments)
 
+#TODO(heathkh): Replace positional arguments with named arguments.  Positional argumenst are a source of hard to find errors when a users passses a value and it happens to be a list instead of a single value, the funtion arguments don't get assigned correctly.  Expecting the user to wrap all calls in "" to prevent this is not reasonable.  
 
 ###############################################################################
 # SNAP - General
@@ -34,7 +35,7 @@ MACRO(CHECK_FOR_MISSING_SYMBOLS target)
 ENDMACRO()    
 
 
-FUNCTION(DISPLAY_PACKAGE_STATUS)
+FUNCTION(DISPLAY_PACKAGE_STATUS)  
   CMAKE_PARSE_ARGUMENTS("" # Default arg prefix is just "_" 
                       "" # Option type arguments
                       "TYPE;URI;" # Single value arguments
@@ -44,12 +45,12 @@ FUNCTION(DISPLAY_PACKAGE_STATUS)
   REQUIRE_NOT_EMPTY(_TYPE _URI)
   MAKE_FRIENDLY_URI(${_URI} friendly_package_uri)
   IF(_MISSING_URIS)    
-    MESSAGE("SKIPPED: ${friendly_package_uri}")
+    MESSAGE(STATUS "SKIPPED: ${friendly_package_uri}")
     FOREACH(missing_package_uri ${_MISSING_URIS})
-      MESSAGE("* unresolved package: ${missing_package_uri}")
+      MESSAGE(STATUS "* unresolved package: ${missing_package_uri}")
     ENDFOREACH()
   ELSE()
-    MESSAGE("     OK: ${friendly_package_uri} (${_TYPE})")
+    MESSAGE(STATUS "     OK: ${friendly_package_uri} (${_TYPE})")
   ENDIF()
 ENDFUNCTION()
 
@@ -104,25 +105,6 @@ SET(SYS_URI_REGEX "^(SYS)://([a-zA-Z0-9-_]+)$")
 SET(VALID_URI_REGEX "^(PRJ|SYS)://(.*)")
 
 #
-MACRO(VERIFY_URI_OR_DIE uri)  
-  STRING(REGEX MATCH ${VALID_URI_REGEX} found ${uri})
-  IF(NOT found)    
-    MESSAGE(SEND_ERROR "Valid uris must start with //, PRJ://, or SYS://")
-    MESSAGE(FATAL_ERROR "Invalid uri: ${uri}")
-  ENDIF()
-  
-  # verify uri has only one run of multiple slashes (e.g. catch the case where the path has a run of more than one /)
-  string(REGEX MATCHALL "(//+)" multi_slash_match_list ${uri})
-  LIST( LENGTH multi_slash_match_list num_multi_slashes )
-  
-  IF (${num_multi_slashes} GREATER 1)    
-    MESSAGE(SEND_ERROR "Path portion of uris must not contain multiple slashes: ${uri}")
-    MESSAGE(FATAL_ERROR "Invalid uri: ${uri}")
-  ENDIF() 
-      
-ENDMACRO()
-
-#
 MACRO(PARSE_URI_SCHEME uri uri_scheme)  
   STRING(REGEX REPLACE ${VALID_URI_REGEX} "\\1" ${uri_scheme} ${uri})     
 ENDMACRO()
@@ -134,32 +116,28 @@ ENDMACRO()
 
 #
 MACRO(PARSE_URI uri scheme path basename)
-  VERIFY_URI_OR_DIE(${uri})  
   PARSE_URI_SCHEME(${uri} uri_scheme)  
   IF ("${uri_scheme}" STREQUAL "PRJ")
     STRING(REGEX REPLACE ${PRJ_URI_REGEX} "\\1;\\2;\\3" uri_parse_list ${uri})
     LIST(LENGTH uri_parse_list num_matches)
     IF (NOT num_matches EQUAL 3)
-        MESSAGE("uri_parse_list: ${uri_parse_list}")
-        MESSAGE(FATAL_ERROR "REGEX parsing failed!")
-    ENDIF()
-    
+        MESSAGE("Provided invalid uri: ${uri_parse_list}")
+        MESSAGE(FATAL_ERROR "Valid uris look like this: [PRJ:|SYS:]//path/to/target/dir:target")
+    ENDIF()    
     LIST(GET uri_parse_list 0 ${scheme})
     LIST(GET uri_parse_list 1 ${path})
     LIST(GET uri_parse_list 2 ${basename})
   ELSEIF ("${uri_scheme}" STREQUAL "SYS")
-    STRING(REGEX REPLACE ${SYS_URI_REGEX} "\\1;\\2" uri_parse_list ${uri})
-    
+    STRING(REGEX REPLACE ${SYS_URI_REGEX} "\\1;\\2" uri_parse_list ${uri})    
     LIST(LENGTH uri_parse_list num_matches)
     IF (NOT num_matches EQUAL 2)
         MESSAGE("uri_parse_list: ${uri_parse_list}")
         MESSAGE(FATAL_ERROR "REGEX parsing failed!")
-    ENDIF()
-       
+    ENDIF()       
     LIST(GET uri_parse_list 0 ${scheme})
     LIST(GET uri_parse_list 1 ${basename})  
-  ELSE()
-    MESSAGE(FATAL_ERROR "unexpected: ${uri_scheme}")
+  ELSE()    
+    MESSAGE(FATAL_ERROR "Invalid uri: ${uri}. Valid uris must start with //, PRJ://, or SYS://")
   ENDIF()    
 ENDMACRO()
 
@@ -168,10 +146,8 @@ ENDMACRO()
 MACRO(TO_CANONICAL_URI in_uri out_uri )
   # Handle elliding the PRJ: prefix (expand // to PRJ://)
   STRING(REGEX REPLACE "^//(.*)" "PRJ://\\1" ${out_uri} ${in_uri})    
-  
   # TODO(kheath): Handle optional elliding of target name when same as target parent dir
-  # Check if a target was specified with : and expand if not  
-  VERIFY_URI_OR_DIE(${${out_uri}})
+  # Check if a target was specified with : and expand if not
 ENDMACRO()
 
 MACRO(TO_CANONICAL_URIS in_uris out_uris)  
@@ -234,10 +210,12 @@ MACRO(SYMLINK_TO_BINARY_DIR files)
     FOREACH(file ${files})        
         SET (src_file_path ${CMAKE_CURRENT_SOURCE_DIR}/${file})
         SET (dst_file_path ${CMAKE_CURRENT_BINARY_DIR}/${file})
-        IF(EXISTS ${src_file_path})
-          EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E create_symlink ${src_file_path} ${dst_file_path})
-        ELSE()
-          MESSAGE(FATAL_ERROR "Missing source file: ${src_file_path}")
+        IF(NOT EXISTS "${dst_file_path}")
+          IF(EXISTS "${src_file_path}")
+            EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E create_symlink ${src_file_path} ${dst_file_path})
+          ELSE()        
+            MESSAGE(FATAL_ERROR "Missing source file: ${src_file_path}")
+          ENDIF()
         ENDIF()
     ENDFOREACH(file)
 ENDMACRO()
@@ -245,8 +223,7 @@ ENDMACRO()
 
 #Example usage 
 # LOCAL_PATHS_TO_ABSOLUTE_PATHS(INPUT_PATHS ${input_paths} FILE_PATHS files DIR_PATHS dirs)
-FUNCTION(LOCAL_PATHS_TO_ABSOLUTE_PATHS)
-  
+FUNCTION(LOCAL_PATHS_TO_ABSOLUTE_PATHS)  
   CMAKE_PARSE_ARGUMENTS("" # Default arg prefix is just "_" 
                       "" # Option type arguments
                       "FILE_PATHS;DIR_PATHS" # Single value arguments
