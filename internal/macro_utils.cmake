@@ -50,7 +50,7 @@ FUNCTION(DISPLAY_PACKAGE_STATUS)
       MESSAGE(STATUS "* unresolved package: ${missing_package_uri}")
     ENDFOREACH()
   ELSE()
-    MESSAGE(STATUS "     OK: ${friendly_package_uri} (${_TYPE})")
+    MESSAGE(STATUS "OK: ${friendly_package_uri} (${_TYPE})")
   ENDIF()
 ENDFUNCTION()
 
@@ -242,8 +242,7 @@ FUNCTION(LOCAL_PATHS_TO_ABSOLUTE_PATHS)
     IF(NOT EXISTS ${path})
       MESSAGE(FATAL_ERROR "specified path doesn't exist: ${path}")
     ENDIF()
-    
-    #MESSAGE(STATUS "******************* path: ${path}") 
+     
     IF(IS_DIRECTORY "${path}")
       LIST(APPEND dir_paths ${path})     
     ELSE()
