@@ -79,7 +79,7 @@ FUNCTION(CPP_LIBRARY)
         SET(target_output "${_NAME}")
         ADD_LIBRARY(${target} STATIC ${_HEADERS} ${_SOURCES})        
         set_target_properties(${target} PROPERTIES COMPILE_FLAGS "-fPIC") # -fPIC required for x86_64 static libs
-        SET_TARGET_PROPERTIES("${target}" PROPERTIES OUTPUT_NAME "${target_output}")     
+        SET_TARGET_PROPERTIES("${target}" PROPERTIES OUTPUT_NAME "${target_output}")
       ELSEIF(BUILD_SHARED_LIB)                       
         SET(target "${target}-shared")
         SET(target_output "${_NAME}-shared")
@@ -96,7 +96,8 @@ FUNCTION(CPP_LIBRARY)
       ENDIF()                   
       TARGET_LINK_LIBRARIES(${target} ${required_libraries})
       CHECK_FOR_MISSING_SYMBOLS(${target})
-      INCLUDE(${cmakesnap_DIR}/internal/cpp_install_common.cmake)      
+      INCLUDE(${cmakesnap_DIR}/internal/cpp_install_common.cmake)
+      ADD_LIBRARY_TARGET_BUILD_FLAG(${target})
     ENDIF()  
         
     # This makes sure CMAKE knows to build all of our dependencies first

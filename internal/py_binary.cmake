@@ -21,6 +21,8 @@ MACRO(PY_BINARY)
                     #[COMMENT comment] [VERBATIM]
                     SOURCES ${_SOURCES})   
   
+  ADD_BINARY_TARGET_BUILD_FLAG(${target})
+  
   # If requested, register as a test
   IF(_TEST_SIZE)
     REGISTER_PY_TEST(NAME ${_NAME} 

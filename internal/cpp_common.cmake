@@ -5,6 +5,8 @@ URI_TO_TARGET_NAME(${target_uri} target)
 # Compute all package dependencies (transitively)
 COMPUTE_PACKAGE_TRANSITIVE_CLOSURE("${_PACKAGES}" missing_package_uris required_package_uris required_libraries required_includes)
 
+RECORD_MISSING_PACKAGES(${target} "${missing_package_uris}")
+
 # Reconfigure the compiler with more helpful default settings
 INCLUDE(${cmakesnap_DIR}/internal/cpp_compiler_tweaks.cmake)
 

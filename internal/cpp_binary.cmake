@@ -39,6 +39,8 @@ MACRO(CPP_BINARY)
   SET_TARGET_PROPERTIES(${target} PROPERTIES OUTPUT_NAME ${_NAME})                
   TARGET_LINK_LIBRARIES(${target} ${required_libraries})
   INCLUDE(${cmakesnap_DIR}/internal/cpp_install_common.cmake)
+  
+  ADD_BINARY_TARGET_BUILD_FLAG(${target})
     
   # This makes sure CMAKE knows to build all of our dependencies first
   FOREACH(dependency_uri ${_PACKAGES})

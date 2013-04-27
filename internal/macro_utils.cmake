@@ -9,6 +9,28 @@ INCLUDE(CMakeParseArguments)
 #TODO(heathkh): Replace positional arguments with named arguments.  Positional argumenst are a source of hard to find errors when a users passses a value and it happens to be a list instead of a single value, the funtion arguments don't get assigned correctly.  Expecting the user to wrap all calls in "" to prevent this is not reasonable.  
 
 ###############################################################################
+# SNAP - Summarize skipped packages 
+###############################################################################
+
+MACRO(RECORD_MISSING_PACKAGES target_name)
+  SET(missing_package_uris "${ARGN}")  
+  IF( missing_package_uris)
+    set_property(GLOBAL APPEND PROPERTY SNAP_SKIPPED_PACKAGES ${target_name})
+  ENDIF()  
+ENDMACRO()
+
+MACRO(CHECK_NO_MISSING_PACKAGES)
+    get_property(SNAP_SKIPPED_PACKAGES GLOBAL PROPERTY SNAP_SKIPPED_PACKAGES)
+    IF(SNAP_SKIPPED_PACKAGES)
+      MESSAGE(STATUS "Can not build following packages (see previous errors): ")
+      FOREACH(skipped_package ${SNAP_SKIPPED_PACKAGES})
+        MESSAGE(STATUS " ${skipped_package} ")
+      ENDFOREACH()
+      MESSAGE(FATAL_ERROR "Giving up.")
+    ENDIF()    
+ENDMACRO()
+
+###############################################################################
 # SNAP - General
 ###############################################################################
 
@@ -53,6 +75,24 @@ FUNCTION(DISPLAY_PACKAGE_STATUS)
     MESSAGE(STATUS "OK: ${friendly_package_uri} (${_TYPE})")
   ENDIF()
 ENDFUNCTION()
+
+MACRO(ADD_BINARY_TARGET_BUILD_FLAG target)
+  IF(SNAP_BUILD_ALL)
+    SET(BUILD_${target} on CACHE BOOL "Build target ${target}" FORCE)
+  ELSE()
+    SET(BUILD_${target} off CACHE BOOL "Build target ${target}")
+  ENDIF()     
+  IF(NOT ${BUILD_${target}})
+    set_target_properties(${target} PROPERTIES EXCLUDE_FROM_ALL "TRUE")
+  ENDIF()
+  
+ENDMACRO()
+
+MACRO(ADD_LIBRARY_TARGET_BUILD_FLAG target)
+  ADD_BINARY_TARGET_BUILD_FLAG(${target})
+  mark_as_advanced(BUILD_${target}) # libraries only expose flag under "advanced" settings  
+ENDMACRO()
+        
 
 ###############################################################################
 # SNAP - Packages
@@ -254,6 +294,7 @@ FUNCTION(LOCAL_PATHS_TO_ABSOLUTE_PATHS)
   set(${_FILE_PATHS} ${file_paths} PARENT_SCOPE)
   set(${_DIR_PATHS} ${dir_paths} PARENT_SCOPE)  
 ENDFUNCTION()
+
 
 
 

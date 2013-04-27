@@ -107,7 +107,7 @@ MACRO(PROTO_LIBRARY)
     # Compute all package dependencies (transitively)
     LIST(APPEND _PACKAGES "SYS://protobuf")
     COMPUTE_PACKAGE_TRANSITIVE_CLOSURE("${_PACKAGES}" missing_package_uris required_package_uris required_libraries required_includes)
-    
+    RECORD_MISSING_PACKAGES(${target} "${missing_package_uris}")
     # Warn if a dependency is missing.
     IF(missing_package_uris)
       MESSAGE(STATUS "Target SKIPPED: ${target}")
@@ -136,6 +136,7 @@ MACRO(PROTO_LIBRARY)
     SET_TARGET_PROPERTIES(${target} PROPERTIES OUTPUT_NAME ${_NAME})
     GET_TARGET_PROPERTY(TARGET_FILE ${target} LOCATION)
     
+    ADD_LIBRARY_TARGET_BUILD_FLAG(${target})    
     IF(NOT TARGET_FILE)
       SET(TARGET_FILE "")
       MESSAGE(FATAL_ERROR "no target defined!")

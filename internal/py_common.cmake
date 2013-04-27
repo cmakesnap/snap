@@ -3,7 +3,7 @@ URI_TO_TARGET_NAME(${target_uri} target)
 
 # Compute all package dependencies (transitively)
 COMPUTE_PACKAGE_TRANSITIVE_CLOSURE("${_PACKAGES}" missing_package_uris required_package_uris required_libraries required_includes)
-
+RECORD_MISSING_PACKAGES(${target} "${missing_package_uris}")
 SYMLINK_TO_BINARY_DIR("${_DATA}")
 SYMLINK_TO_BINARY_DIR("${_SOURCES}")
 CREATE_PYTHON_INIT_FILES()

@@ -25,7 +25,7 @@ FUNCTION(SWIG_PYTHON)
     
     # Compute all package dependencies (transitively)
     COMPUTE_PACKAGE_TRANSITIVE_CLOSURE("${_WRAP_PACKAGE_URI}" missing_package_uris required_package_uris required_libraries required_includes)
-    
+    RECORD_MISSING_PACKAGES(${target} "${missing_package_uris}")
     # Use cmake's system install SWIG module
     FIND_PACKAGE(SWIG)
     INCLUDE(${SWIG_USE_FILE})
@@ -34,10 +34,11 @@ FUNCTION(SWIG_PYTHON)
     MARK_AS_ADVANCED(SHARED_PTHREAD_LIBRARY SWIG_DIR SWIG_EXECUTABLE SWIG_VERSION)
     
     FIND_PACKAGE(PythonLibs)
-    INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR} ${required_includes})    
+    INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR} ${required_includes})
     SET(CMAKE_SWIG_FLAGS "")
     SET_SOURCE_FILES_PROPERTIES(${_SOURCE} PROPERTIES CPLUSPLUS ON)
     SWIG_ADD_MODULE(${_NAME} python ${_SOURCE})
+    ADD_LIBRARY_TARGET_BUILD_FLAG(${SWIG_MODULE_${_NAME}_REAL_NAME} )
     
     # This makes sure CMAKE knows to build all of our dependencies first
     URIS_TO_TARGET_NAMES("${required_package_uris}" required_package_target_names)

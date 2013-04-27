@@ -11,7 +11,3 @@ ENDIF()
 
 PACKAGE_BASENAME_TO_URI(${_NAME} target_uri)
 URI_TO_TARGET_NAME(${target_uri} target)
-
-
-
-
