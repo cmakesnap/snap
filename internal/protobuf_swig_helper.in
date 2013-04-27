@@ -12,8 +12,6 @@
 #if HAVE_GLOG
   #include "google/glog/logging.h"
 #endif
-
-#pragma clang diagnostic ignored "-Wwrite-strings" // silence warnings caused because SWIG generates char* when it should use const char*
 %}
 
 %define %proto_typemaps(PROTO_MESSAGE_NAME, PROTO_MESSAGE_PYTHON_NAME, PROTO_MESSAGE_PYTHON_MODULE)
