@@ -52,7 +52,7 @@ MACRO(REMOTE_RESOURCES)
         
   DISPLAY_PACKAGE_STATUS(
     TYPE "REMOTE RESOURCES"
-    URI ${target_uri}
+    URI ${target_uri}    
     MISSING_URIS ""
   )    
 ENDMACRO()

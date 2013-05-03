@@ -60,17 +60,19 @@ ENDMACRO()
 FUNCTION(DISPLAY_PACKAGE_STATUS)  
   CMAKE_PARSE_ARGUMENTS("" # Default arg prefix is just "_" 
                       "" # Option type arguments
-                      "TYPE;URI;" # Single value arguments
-                      "MISSING_URIS;" # List valued arguments
+                      "TYPE;URI" # Single value arguments
+                      "MISSING_URIS;" # List valued arguments                      
                       "${ARGN}" )
   # Make sure required parameters were provided
   REQUIRE_NOT_EMPTY(_TYPE _URI)
   MAKE_FRIENDLY_URI(${_URI} friendly_package_uri)
   IF(_MISSING_URIS)    
     MESSAGE(STATUS "SKIPPED: ${friendly_package_uri}")
-    FOREACH(missing_package_uri ${_MISSING_URIS})
-      MESSAGE(STATUS "* unresolved package: ${missing_package_uri}")
-    ENDFOREACH()
+    MESSAGE(STATUS "  Unresolved packages ${_MISSING_URIS} in ${CMAKE_CURRENT_LIST_FILE}.")
+    #FOREACH(missing_package_uri ${_MISSING_URIS})
+    #  MESSAGE(STATUS "* SNAP ERROR: Unresolved packages ${missing_package_uri}")
+    #ENDFOREACH()
+    
   ELSE()
     MESSAGE(STATUS "OK: ${friendly_package_uri} (${_TYPE})")
   ENDIF()

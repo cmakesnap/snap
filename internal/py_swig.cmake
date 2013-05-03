@@ -37,8 +37,10 @@ FUNCTION(SWIG_PYTHON)
     INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR} ${required_includes})
     SET(CMAKE_SWIG_FLAGS "")
     SET_SOURCE_FILES_PROPERTIES(${_SOURCE} PROPERTIES CPLUSPLUS ON)
-    SWIG_ADD_MODULE(${_NAME} python ${_SOURCE})
-    ADD_LIBRARY_TARGET_BUILD_FLAG(${SWIG_MODULE_${_NAME}_REAL_NAME} )
+    SWIG_ADD_MODULE(${_NAME} python ${_SOURCE}) #TODO(heathkh): modifty SWIG_ADD_MODULE to use our custom target name scheme but preserve the output filename
+    
+    #TODO(heathkh): Reenable this once the SWIG macro is reconfigured to user our target names
+    #ADD_LIBRARY_TARGET_BUILD_FLAG(${SWIG_MODULE_${_NAME}_REAL_NAME})
     
     # This makes sure CMAKE knows to build all of our dependencies first
     URIS_TO_TARGET_NAMES("${required_package_uris}" required_package_target_names)
@@ -59,7 +61,7 @@ FUNCTION(SWIG_PYTHON)
     # Update status message
     DISPLAY_PACKAGE_STATUS(
       TYPE         "PY SWIG"
-      URI          ${target_uri}
+      URI          ${target_uri}     
       MISSING_URIS ${missing_package_uris}
     )    
 

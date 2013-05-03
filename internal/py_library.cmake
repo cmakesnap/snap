@@ -18,7 +18,7 @@ MACRO(PY_LIBRARY)
      
   DISPLAY_PACKAGE_STATUS(
     TYPE "PY LIB"
-    URI ${target_uri}
+    URI ${target_uri}    
     MISSING_URIS ${missing_package_uris}
   )
 ENDMACRO(PY_LIBRARY)

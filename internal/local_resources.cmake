@@ -23,7 +23,7 @@ MACRO(LOCAL_RESOURCES)
         
   DISPLAY_PACKAGE_STATUS(
     TYPE "LOCAL RESOURCES"
-    URI ${target_uri}
+    URI ${target_uri}    
     MISSING_URIS ""
   )        
 ENDMACRO()

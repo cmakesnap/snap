@@ -9,7 +9,7 @@ MACRO(JAVA_BINARY)
   ADD_BINARY_TARGET_BUILD_FLAG(${target})   
   DISPLAY_PACKAGE_STATUS(
     TYPE         "JAVA BIN"
-    URI          ${target_uri}
+    URI          ${target_uri}    
     MISSING_URIS ${missing_package_uris}
   )
 ENDMACRO(JAVA_BINARY)

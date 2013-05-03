@@ -23,6 +23,12 @@ MACRO(PY_BINARY)
   
   ADD_BINARY_TARGET_BUILD_FLAG(${target})
   
+  # This makes sure CMAKE knows to build all of our dependencies first
+  FOREACH(dependency_uri ${_PACKAGES})
+    URI_TO_TARGET_NAME(${dependency_uri} dependency_target)
+    ADD_DEPENDENCIES(${target} ${dependency_target})
+  ENDFOREACH()
+  
   # If requested, register as a test
   IF(_TEST_SIZE)
     REGISTER_PY_TEST(NAME ${_NAME} 
@@ -30,8 +36,8 @@ MACRO(PY_BINARY)
   ENDIF()
   
   DISPLAY_PACKAGE_STATUS(
-    TYPE "PY BIN"
-    URI ${target_uri}
+    TYPE         "PY BIN"
+    URI          ${target_uri}    
     MISSING_URIS ${missing_package_uris}
   )
       

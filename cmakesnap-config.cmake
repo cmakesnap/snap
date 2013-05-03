@@ -9,7 +9,7 @@ SET(__CMAKESNAP_INCLUDED TRUE)
 SET(CMAKE_MODULE_PATH "${cmakesnap_DIR}/internal/modules/;${cmakesnap_DIR}/sys/;${CMAKE_MODULE_PATH}")
 MARK_AS_ADVANCED(FORCE cmakesnap_DIR)
 
-SET(SNAP_BUILD_ALL off CACHE BOOL "Force building of all targets (useful for testing)")
+SET(SNAP_BUILD_ALL on CACHE BOOL "Force building of all targets (future features may allow this to be off by default for much faster build times)")
 INCLUDE(${cmakesnap_DIR}/internal/macro_utils.cmake)
 INCLUDE(${cmakesnap_DIR}/internal/load_required_packages.cmake)
 INCLUDE(${cmakesnap_DIR}/internal/cpp_binary.cmake)

@@ -56,9 +56,9 @@ MACRO(CPP_BINARY)
     
   # Print status update
   DISPLAY_PACKAGE_STATUS(
-    TYPE         "CPP BIN"
-    URI          ${target_uri}
-    MISSING_URIS ${missing_package_uris}
+    TYPE          "CPP BIN"
+    URI           ${target_uri}    
+    MISSING_URIS  ${missing_package_uris}
   )  
 ENDMACRO(CPP_BINARY)
 
