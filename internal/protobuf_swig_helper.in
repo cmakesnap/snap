@@ -8,28 +8,31 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
-
-#if HAVE_GLOG
-  #include "google/glog/logging.h"
-#endif
 %}
 
 %define %proto_typemaps(PROTO_MESSAGE_NAME, PROTO_MESSAGE_PYTHON_NAME, PROTO_MESSAGE_PYTHON_MODULE)
 
 %typemap(in) const PROTO_MESSAGE_NAME& (PROTO_MESSAGE_NAME temp){
   if (!PyObject_HasAttrString($input, "SerializeToString")){
-    #if HAVE_GLOG
-      LOG(FATAL) << "looks like this is not a protobuffer!";
-    #else
-      assert(false); // looks like this is not a protobuffer!
-    #endif
+    char msg[512];
+    snprintf(msg, sizeof(msg), "Input argument should be a protocol buffer object, but it is %s.", obj0->ob_type->tp_name);
+    SWIG_exception(SWIG_RuntimeError, msg);       
   }
-  PyObject* py_serialized = PyObject_CallMethod($input, "SerializeToString", "");
-   
+  PyObject* py_serialized = PyObject_CallMethod($input, "SerializeToString", "");   
+  if (!py_serialized) {
+    char msg[512];
+    snprintf(msg, sizeof(msg), "Failed to serialize message of type %s (probably missing required fields).", obj0->ob_type->tp_name);
+    SWIG_exception(SWIG_RuntimeError, msg);
+  }
   char *buffer;
   Py_ssize_t length; 
-  PyString_AsStringAndSize(py_serialized, &buffer, &length);
-  assert(temp.ParseFromArray(buffer, length)); // if this fails, you probably have a mismatch in proto types      
+  PyString_AsStringAndSize(py_serialized, &buffer, &length);  
+  if (!temp.ParseFromArray(buffer, length)){ // if this fails, you probably have a mismatch in proto types
+    char msg[512];
+    snprintf(msg, sizeof(msg), "Expected protocol buffer of type PROTO_MESSAGE_NAME but got one of type %s.", obj0->ob_type->tp_name);
+    SWIG_exception(SWIG_RuntimeError, msg);
+  }      
+  temp.CheckInitialized();
   $1 = &temp;
 }
 
@@ -39,15 +42,19 @@
 
 %typemap(argout) PROTO_MESSAGE_NAME* (PROTO_MESSAGE_NAME temp) {  
   PyObject* mod = PyImport_ImportModule("PROTO_MESSAGE_PYTHON_MODULE");  
-  #if HAVE_GLOG
-    CHECK_NOTNULL(mod);    
-  #endif
+  if (!mod){
+    SWIG_exception(SWIG_RuntimeError, "Failed to load python module: PROTO_MESSAGE_PYTHON_MODULE");
+  }
   PyObject* instance = PyObject_CallMethod(mod, "PROTO_MESSAGE_PYTHON_NAME", "()");
+    
+  if (!instance){
+    SWIG_exception(SWIG_RuntimeError,"Failed to create PROTO_MESSAGE_PYTHON_NAME");
+  }
   
-  #if HAVE_GLOG
-    CHECK_NOTNULL(instance);
-    CHECK(PyObject_HasAttrString(instance, (char *)"ParseFromString"));    
-  #endif
+  if(!PyObject_HasAttrString(instance, (char *)"ParseFromString")){
+    SWIG_exception(SWIG_RuntimeError,"Failed to create PROTO_MESSAGE_PYTHON_NAME");
+  }    
+  
   std::string s = $1->SerializeAsString();
   
   // NOTE: must use the (s#) format string and length delimiated format because string itself may contain null which screws up parsing
@@ -62,12 +69,9 @@
   }
 }
 
-
 %enddef    /* %proto_typemaps() macro */
 
 @TYPEMAP_MACRO_CALLS@
-
-
 
 #endif  // SWIGPYTHON
 
