@@ -22,12 +22,13 @@ FUNCTION(CPP_LIBRARY)
   IF(_LIB_TYPE)
     STRING(COMPARE EQUAL ${_LIB_TYPE} STATIC BUILD_STATIC_LIB)
     STRING(COMPARE EQUAL ${_LIB_TYPE} SHARED BUILD_SHARED_LIB)
+    STRING(COMPARE EQUAL ${_LIB_TYPE} STATIC_AND_SHARED BUILD_STATIC_AND_SHARED_LIB)
     STRING(COMPARE EQUAL ${_LIB_TYPE} HEADER BUILD_HEADER_LIB)
-    IF(NOT BUILD_STATIC_LIB AND NOT BUILD_SHARED_LIB AND NOT BUILD_HEADER_LIB)
-      MESSAGE(FATAL_ERROR "_LIB_TYPE must be one of: STATIC, SHARED, HEADER")
+    IF(NOT BUILD_STATIC_LIB AND NOT BUILD_SHARED_LIB AND NOT BUILD_STATIC_AND_SHARED_LIB AND NOT BUILD_HEADER_LIB)
+      MESSAGE(FATAL_ERROR "_LIB_TYPE must be one of: STATIC, SHARED, STATIC_AND_SHARED, HEADER")
     ENDIF()
   ELSE()
-    MESSAGE(FATAL_ERROR "_LIB_TYPE must be one of: STATIC, SHARED, HEADER")
+    MESSAGE(FATAL_ERROR "_LIB_TYPE must be one of: STATIC, SHARED, STATIC_AND_SHARED, HEADER")
   ENDIF()      
   
   IF(BUILD_HEADER_LIB)
@@ -43,75 +44,92 @@ FUNCTION(CPP_LIBRARY)
   ENDIF()
     
   IF(_SWIG_PY AND BUILD_STATIC_LIB)
-    MESSAGE(FATAL_ERROR "You requested python bindings for a STATIC lib... This is not possible.  Please switch to STATIC.")     
+    MESSAGE(FATAL_ERROR "You requested python bindings for a STATIC lib... This is not possible.  Please switch to STATIC_AND_SHARED.")     
   ENDIF()
   
   INCLUDE(${cmakesnap_DIR}/internal/cpp_common.cmake)
   
-  
-  
-# If we are here we are building a lib of type STATIC, SHARED, or HEADER
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${required_includes})
-GET_DIRECTORY_PROPERTY(CUR_INCLUDE INCLUDE_DIRECTORIES)
+  # Create target (only if it has _SOURCES, otherwise we have a header only lib)
+  IF (BUILD_STATIC_AND_SHARED_LIB)
+    # Make recusive calls for each type
+    CPP_LIBRARY(
+      NAME     ${_NAME}  
+      SOURCES  ${_SOURCES}      
+      HEADERS  ${_HEADERS}      
+      PACKAGES ${_PACKAGES}
+      DATA     ${_DATA}
+      LIB_TYPE STATIC
+    )
 
-# Create target (only if it has _SOURCES, otherwise we have a header only lib)  
-IF(NOT BUILD_HEADER_LIB)
-   SET(target_output "${target}")
-  IF(BUILD_STATIC_LIB)       
-    ADD_LIBRARY(${target} STATIC ${_HEADERS} ${_SOURCES})        
-    set_target_properties(${target} PROPERTIES COMPILE_FLAGS "-fPIC") # -fPIC required for x86_64 static libs
-    SET_TARGET_PROPERTIES("${target}" PROPERTIES OUTPUT_NAME "${target_output}")
-  ELSEIF(BUILD_SHARED_LIB)                       
-    ADD_LIBRARY(${target} SHARED ${_HEADERS} ${_SOURCES}) 
-    SET_TARGET_PROPERTIES("${target}" PROPERTIES OUTPUT_NAME "${target_output}")
-    IF(_SWIG_PY)
-      SET(wrap_package_uri "${target_uri}") 
-      SWIG_PYTHON(NAME   py_${_NAME}
-                  SOURCE ${_SWIG_PY}
-                  WRAP_PACKAGE_URI   ${wrap_package_uri})                      
-    ENDIF()
+    CPP_LIBRARY(
+      NAME     ${_NAME}
+      SOURCES  ${_SOURCES}      
+      HEADERS  ${_HEADERS}      
+      PACKAGES ${_PACKAGES}
+      DATA     ${_DATA}
+      LIB_TYPE SHARED
+      SWIG_PY  ${_SWIG_PY}
+    )      
   ELSE()
-    MESSAGE(FATAL_ERROR "this shouldn't happen")
-  ENDIF()                   
-  TARGET_LINK_LIBRARIES(${target} ${required_libraries})
-  CHECK_FOR_MISSING_SYMBOLS(${target})
-  INCLUDE(${cmakesnap_DIR}/internal/cpp_install_common.cmake)
-  ADD_LIBRARY_TARGET_BUILD_FLAG(${target})
-ENDIF()  
+    # If we are here we are building a lib of type STATIC, SHARED, or HEADER
+    INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${required_includes})
+    GET_DIRECTORY_PROPERTY(CUR_INCLUDE INCLUDE_DIRECTORIES)  
+    IF(NOT BUILD_HEADER_LIB)
+      IF(BUILD_STATIC_LIB)       
+        SET(target_output "${_NAME}")
+        ADD_LIBRARY(${target} STATIC ${_HEADERS} ${_SOURCES})        
+        set_target_properties(${target} PROPERTIES COMPILE_FLAGS "-fPIC") # -fPIC required for x86_64 static libs
+        SET_TARGET_PROPERTIES("${target}" PROPERTIES OUTPUT_NAME "${target_output}")
+      ELSEIF(BUILD_SHARED_LIB)                       
+        SET(target "${target}-shared")
+        SET(target_output "${_NAME}-shared")
+        ADD_LIBRARY(${target} SHARED ${_HEADERS} ${_SOURCES}) 
+        SET_TARGET_PROPERTIES("${target}" PROPERTIES OUTPUT_NAME "${target_output}")
+        IF(_SWIG_PY)
+          SET(wrap_package_uri "${target_uri}-shared") 
+          SWIG_PYTHON(NAME   py_${_NAME}
+                      SOURCE ${_SWIG_PY}
+                      WRAP_PACKAGE_URI   ${wrap_package_uri})                      
+        ENDIF()
+      ELSE()
+        MESSAGE(FATAL_ERROR "this shouldn't happen")
+      ENDIF()                   
+      TARGET_LINK_LIBRARIES(${target} ${required_libraries})
+      CHECK_FOR_MISSING_SYMBOLS(${target})
+      INCLUDE(${cmakesnap_DIR}/internal/cpp_install_common.cmake)
+      ADD_LIBRARY_TARGET_BUILD_FLAG(${target})
+    ENDIF()  
+        
+    # This makes sure CMAKE knows to build all of our dependencies first
+    FOREACH(dependency_uri ${_PACKAGES})
+      URI_TO_TARGET_NAME(${dependency_uri} dependency_target)
+      ADD_DEPENDENCIES(${target} ${dependency_target})
+    ENDFOREACH()
+        
+    #write meta data files to allow the packages to be used easily by other 
+    #projects built using the APP_PROJECT or LIB_PROJECT macros
+    GET_TARGET_PROPERTY(TARGET_FILE ${target} LOCATION)
+    IF(NOT TARGET_FILE)
+      SET(TARGET_FILE "")
+    ENDIF(NOT TARGET_FILE)
+        
+    TO_CANONICAL_URIS("${_PACKAGES}" requiredPackages)       
+    IF(NOT DEFINED cmakesnap_DIR)
+      MESSAGE(FATAL_ERROR "cmakesnap_DIR not defined")
+    ENDIF(NOT DEFINED cmakesnap_DIR)    
+    CONFIGURE_FILE("${cmakesnap_DIR}/internal/config.cmake.in"
+                    ${CMAKE_CURRENT_BINARY_DIR}/${target}Config.cmake @ONLY IMMEDIATE)        
+           
+    SET("${target}_DIR" ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "Path to package ${target_uri}" FORCE)
+    MARK_AS_ADVANCED("${target}_DIR")
     
-# This makes sure CMAKE knows to build all of our dependencies first
-FOREACH(dependency_uri ${_PACKAGES})
-  URI_TO_TARGET_NAME(${dependency_uri} dependency_target)
-  ADD_DEPENDENCIES(${target} ${dependency_target})
-ENDFOREACH()
-    
-#write meta data files to allow the packages to be used easily by other 
-#projects built using the APP_PROJECT or LIB_PROJECT macros
-GET_TARGET_PROPERTY(target_path ${target} LOCATION)
-IF(NOT target_path)
-  SET(target_path "")
-ENDIF()
-
-FILE(RELATIVE_PATH target_path_rel ${CMAKE_CURRENT_BINARY_DIR} ${target_path})
-    
-    
-TO_CANONICAL_URIS("${_PACKAGES}" requiredPackages)       
-IF(NOT DEFINED cmakesnap_DIR)
-  MESSAGE(FATAL_ERROR "cmakesnap_DIR not defined")
-ENDIF(NOT DEFINED cmakesnap_DIR)    
-CONFIGURE_FILE("${cmakesnap_DIR}/internal/config.cmake.in"
-                ${CMAKE_CURRENT_BINARY_DIR}/${target}Config.cmake @ONLY IMMEDIATE)        
-       
-SET("${target}_DIR" ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "Path to package ${target_uri}" FORCE)
-MARK_AS_ADVANCED("${target}_DIR")
-
-# print status update  
-DISPLAY_PACKAGE_STATUS(
-  TYPE         "CPP LIB"
-  URI          ${target_uri}      
-  MISSING_URIS ${missing_package_uris}
-)    
-  
+    # print status update  
+    DISPLAY_PACKAGE_STATUS(
+      TYPE         "CPP LIB"
+      URI          ${target_uri}      
+      MISSING_URIS ${missing_package_uris}
+    )    
+  ENDIF()
   
 ENDFUNCTION(CPP_LIBRARY)
 
