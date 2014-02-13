@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 
-""" This script installs a customized version of protobuf 2.4.1.  
-Our application requires the use of -fPIC and the CPP implementation for python
+""" 
+This script installs the dependences for CMake Snap including
+
+CMake 2.8 - 
+protobuf 2.4.1 - Note: Our application requires the use of -fPIC and the CPP implementation for python
+Swig 2.0 - 
 """
 
 import os
@@ -35,6 +39,12 @@ def InstallSwig():
   cmd = 'sudo apt-get install swig python-dev'  
   ExecuteCmd(cmd)
   return  
+
+
+def InstallQt():  
+  cmd = 'sudo apt-get install libqt4-dev libqt4-gui'  
+  ExecuteCmd(cmd)
+  return
   
 def InstallProtobuffers():
   url = 'http://protobuf.googlecode.com/files/protobuf-2.4.1.tar.gz'
@@ -55,6 +65,8 @@ def InstallProtobuffers():
 
 
 if __name__ == "__main__":
+  InstallQt()
   InstallCMake()
   InstallSwig()
   InstallProtobuffers()
+  

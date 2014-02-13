@@ -1,6 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
-
+ADD_SUBDIRECTORY(qt) # contains a qt gui application
 ADD_SUBDIRECTORY(base64) # contains a standard C++ library package 
 
 # Example of a header only C++ library package
