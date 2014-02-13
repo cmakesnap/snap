@@ -20,7 +20,7 @@ MACRO(CPP_BINARY)
   CMAKE_PARSE_ARGUMENTS("" # Default arg prefix is just "_" 
                       "" # Option type arguments
                       "NAME;TEST_SIZE;" # Single value arguments
-                      "SOURCES;HEADERS;DATA;PACKAGES;" # List valued arguments
+                      "SOURCES;HEADERS;DATA;PACKAGES;TOOLS;QT_UI;" # List valued arguments
                       ${argList} )
 
   # Make sure required parameters were provided

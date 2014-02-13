@@ -35,6 +35,18 @@ ENDMACRO()
 ###############################################################################
 
 
+MACRO(LIST_CONTAINS list arg outputBool)        
+    SET(${outputBool} FALSE)
+    FOREACH(item ${list})
+        #MESSAGE("${item} ${arg}")
+        STRING(COMPARE EQUAL ${item} ${arg} equal)
+        IF(equal)  
+            SET(${outputBool} TRUE)
+        ENDIF(equal)
+    ENDFOREACH(item ${list})
+ENDMACRO(LIST_CONTAINS list arg outputBool)
+
+
 MACRO(REQUIRE_NOT_EMPTY)
   # NOTE: must be a macro and not a function because it must access variables
   # from caller's scope  

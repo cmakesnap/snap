@@ -1,3 +1,15 @@
+
+# Load support for any CPP tools
+FILE(GLOB toolList ${CMAKE_CURRENT_LIST_DIR}/tools/*Tools.cmake)
+FOREACH(tool ${toolList})
+    #MESSAGE("including tool: ${tool}")
+    INCLUDE(${tool})    
+    IF(TOOL_ERROR)                 
+        RETURN()   
+    ENDIF()    
+ENDFOREACH(tool ${toolList})
+
+
 # Compute the uri and target name
 PACKAGE_BASENAME_TO_URI(${_NAME} target_uri)
 URI_TO_TARGET_NAME(${target_uri} target)
