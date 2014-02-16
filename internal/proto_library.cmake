@@ -54,9 +54,12 @@ function(PROTOBUF_GENERATE_SWIG SRCS)
     
     get_filename_component(module_path ${module_path} PATH)
     #MESSAGE(STATUS "module_path: ${module_path}") 
-    
-    STRING(REPLACE "/" "." module_prefix ${module_path})
-    SET(MODULE_NAME "${module_prefix}.${FIL_WE}_pb2")
+    IF(module_path)
+      STRING(REPLACE "/" "." module_prefix ${module_path})
+      SET(MODULE_NAME "${module_prefix}.${FIL_WE}_pb2")
+    ELSE()
+      SET(MODULE_NAME "${FIL_WE}_pb2")
+    ENDIF()  
     
     #MESSAGE(STATUS "MODULE_NAME: ${MODULE_NAME}")
     #MESSAGE(STATUS "MESSAGE_NAMES: ${MESSAGE_NAMES}")
@@ -171,6 +174,7 @@ MACRO(PROTO_LIBRARY)
     ###################
     ##### SWIG   ######
     ###################    
+    MESSAGE(STATUS ${_PROTO})
     PROTOBUF_GENERATE_SWIG(PROTO_SWIG_SRCS ${_PROTO})
     ADD_CUSTOM_TARGET( generate_swig_${target}  ALL DEPENDS ${PROTO_SWIG_SRCS} )
    
