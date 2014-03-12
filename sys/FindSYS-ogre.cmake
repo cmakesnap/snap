@@ -1,9 +1,9 @@
 FIND_SNAP_SYS_PACKAGE(
   NAME                  SYS-ogre
-  LIBRARY_NAMES         libOgreMain.so 
+  LIBRARY_NAMES         libOgreMain.so libOgrePaging.so libOgreProperty.so libOgreRTShaderSystem.so libOgreTerrain.so
   LIBRARY_SEARCH_PATHS  /usr/local/lib                       
-  PATH_TO_A_HEADER      OGRE/OgreResource.h
-  INCLUDE_SEARCH_PATHS  /usr/local/include/                
+  PATH_TO_A_HEADER      Ogre.h
+  INCLUDE_SEARCH_PATHS  /usr/local/include/OGRE/   
 )
 
 
