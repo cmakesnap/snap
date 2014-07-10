@@ -47,7 +47,9 @@ def InstallQt():
   return
   
 def InstallProtobuffers():
-  url = 'http://protobuf.googlecode.com/files/protobuf-2.4.1.tar.gz'
+  
+  url = 'http://protobuf.googlecode.com/files/protobuf-2.5.0.tar.gz'
+    
   split = urllib2.urlparse.urlsplit(url)
   dest_filename = "/tmp/" + split.path.split("/")[-1]
   urllib.urlretrieve(url, dest_filename)
@@ -55,7 +57,7 @@ def InstallProtobuffers():
   tar = tarfile.open(dest_filename)
   tar.extractall('/tmp/')
   tar.close()  
-  src_path = '/tmp/protobuf-2.4.1/'
+  src_path = '/tmp/protobuf-2.5.0/'
   assert(os.path.exists(src_path))  
   cmd = 'cd %s && export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=cpp && export CCFLAGS=-fPIC && export CXXFLAGS=-fPIC && ./configure && make -j10 && sudo make install && cd python && sudo  PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=cpp python setup.py install; sudo ldconfig;' % (src_path)
   ExecuteCmd(cmd)    

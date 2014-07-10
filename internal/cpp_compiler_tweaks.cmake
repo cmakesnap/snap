@@ -17,6 +17,7 @@ ELSEIF (${SNAP_CPP_WARNING_LEVEL} EQUAL 1)
   ADD_DEFINITIONS(-Wno-unused-variable)
   ADD_DEFINITIONS(-Wno-unneeded-internal-declaration)
   ADD_DEFINITIONS(-Wno-overloaded-virtual)
+  ADD_DEFINITIONS(-Wno-unused-local-typedefs)
   
   # Turn some warnings into errors
   ADD_DEFINITIONS(-Werror=return-type)  
@@ -34,6 +35,7 @@ ELSEIF (${SNAP_CPP_WARNING_LEVEL} EQUAL 2)
   ADD_DEFINITIONS(-Wno-unused-variable)
   ADD_DEFINITIONS(-Wno-unneeded-internal-declaration)
   ADD_DEFINITIONS(-Wno-overloaded-virtual)
+  ADD_DEFINITIONS(-Wno-unused-local-typedefs)
   
   # Turn some warnings into errors
   ADD_DEFINITIONS(-Werror=return-type)    
