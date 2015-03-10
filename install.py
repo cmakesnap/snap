@@ -4,7 +4,7 @@
 This script installs the dependences for CMake Snap including
 
 CMake 2.8 - 
-protobuf 2.4.1 - Note: Our application requires the use of -fPIC and the CPP implementation for python
+protobuf 2.6.1 - Note: Our application requires the use of -fPIC and the CPP implementation for python
 Swig 2.0 - 
 """
 
@@ -51,7 +51,7 @@ def InstallQt():
   return
   
 def InstallProtobuffers():
-  url = 'https://github.com/google/protobuf/releases/download/2.6.1/protobuf-2.6.1.tar.gz'
+  url = 'https://github.com/google/protobuf/releases/download/v2.6.1/protobuf-2.6.1.tar.gz'
     
   split = urllib2.urlparse.urlsplit(url)
   dest_filename = "/tmp/" + split.path.split("/")[-1]
